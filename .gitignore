@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+*.log
+*.err
+.vercel
+.DS_Store
+
+server/prisma/dev.db
+server/prisma/dev.db-journal
+server/prisma/*.db
+server/prisma/*.db-journal

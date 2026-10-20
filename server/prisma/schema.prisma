@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String          @id @default(cuid())
+  email        String          @unique
+  name         String
+  passwordHash String
+  avatarColor  String          @default("#6366f1")
+  title        String?
+  isBot        Boolean         @default(false)
+  createdAt    DateTime        @default(now())
+  lastSeenAt   DateTime        @default(now())
+  memberships  ChannelMember[]
+  messages     Message[]
+  reactions    Reaction[]
+}
+
+model Channel {
+  id          String          @id @default(cuid())
+  name        String          @unique
+  topic       String?
+  type        String          @default("PUBLIC")
+  createdById String?
+  createdAt   DateTime        @default(now())
+  members     ChannelMember[]
+  messages    Message[]
+
+  @@index([type])
+}
+
+model ChannelMember {
+  id         String    @id @default(cuid())
+  channelId  String
+  userId     String
+  joinedAt   DateTime  @default(now())
+  lastReadAt DateTime  @default(now())
+  channel    Channel   @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([channelId, userId])
+  @@index([userId])
+}
+
+model Message {
+  id        String     @id @default(cuid())
+  channelId String
+  authorId  String
+  body      String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  edited    Boolean    @default(false)
+  channel   Channel    @relation(fields: [channelId], references: [id], onDelete: Cascade)
+  author    User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  reactions Reaction[]
+
+  @@index([channelId, createdAt])
+}
+
+model Reaction {
+  id        String   @id @default(cuid())
+  messageId String
+  userId    String
+  emoji     String
+  createdAt DateTime @default(now())
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId])
+}
