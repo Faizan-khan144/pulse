@@ -19,7 +19,7 @@ Channels, direct messages, presence, typing indicators, reactions and honest unr
 - **Live delivery** over Socket.IO when a socket is available, with a five second polling fallback when it is not.
 - **Presence and typing** that expire on their own instead of getting stuck.
 - **Reactions, edits and deletes** scoped to the person who wrote the message.
-- **A workspace bot** that greets you in a DM and then stops. It is labelled `BOT`, it never pretends to be a teammate, and it never invents a reply.
+- **A workspace bot** in its own DM. It is labelled `BOT`, never pretends to be a teammate, and has no language model behind it. It only answers `help`, `channels`, `team` and `whoami` using real workspace data.
 - **Real numbers everywhere.** The demo workspace ships with three channels, six seed messages and two accounts because that is exactly what the seed creates.
 
 No tracking scripts, no fake activity feed, no enterprise settings maze.
