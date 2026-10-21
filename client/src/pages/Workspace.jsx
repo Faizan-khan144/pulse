@@ -600,7 +600,7 @@ function MembersPanel({ channel, selfId, online, onClose }) {
           <p className="mt-2 text-[11.5px] leading-relaxed text-slate-600">
             {isDm
               ? botMember
-                ? 'The workspace bot. It leaves setup notes here and does not reply.'
+                ? 'The workspace bot. Ask it "help", "channels", "team" or "whoami" in this DM.'
                 : `A private conversation between you and ${members.find((member) => member.id !== selfId)?.name || 'your teammate'}.`
               : channel?.topic || 'No topic set for this channel yet.'}
           </p>
@@ -1005,7 +1005,7 @@ export default function Workspace() {
                       <p className="mt-1.5 text-[12px] leading-relaxed text-slate-500">
                         {isDm
                           ? dmUser?.isBot
-                            ? 'The workspace bot leaves setup notes here. It reads like a noticeboard, not a teammate.'
+                            ? 'The workspace bot answers a few setup questions: help, channels, team and whoami. It never pretends to be a teammate.'
                             : 'This is the start of your private conversation. Nothing here is posted to a channel.'
                           : activeChannel?.topic || 'This channel is ready. Send the first message.'}
                       </p>
