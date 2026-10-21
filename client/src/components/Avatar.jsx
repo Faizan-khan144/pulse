@@ -1,3 +1,4 @@
+import { Bot } from 'lucide-react'
 import { cn, initials } from '../lib/utils'
 
 const sizes = {
@@ -17,7 +18,11 @@ export default function Avatar({ user, size = 'md', online = false, className = 
         )}
         style={{ background: `linear-gradient(140deg, ${user?.avatarColor || '#0e9384'}, rgba(0,0,0,0.35))` }}
       >
-        {initials(user?.name || '?')}
+        {user?.isBot ? (
+          <Bot className="h-1/2 w-1/2" strokeWidth={2.2} />
+        ) : (
+          initials(user?.name || '?')
+        )}
       </span>
       {online ? (
         <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-[var(--panel)] bg-emerald-500" />

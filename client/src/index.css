@@ -180,6 +180,13 @@ button {
   background-size: 18px 18px;
 }
 
+.chat-canvas {
+  background-image: radial-gradient(rgba(26, 29, 36, 0.035) 1px, transparent 1px);
+  background-size: 22px 22px;
+  background-position: 11px 11px;
+}
+
+
 .grid-lines {
   background-image: linear-gradient(rgba(26, 29, 36, 0.04) 1px, transparent 1px),
     linear-gradient(90deg, rgba(26, 29, 36, 0.04) 1px, transparent 1px);
