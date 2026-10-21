@@ -28,11 +28,17 @@ function onlineIds() {
   return [...presence.keys()]
 }
 
-io.use((socket, next) => {
+io.use(async (socket, next) => {
   const token = socket.handshake.auth?.token
   if (!token) return next(new Error('No token'))
   try {
-    socket.user = jwt.verify(token, SECRET)
+    const payload = jwt.verify(token, SECRET)
+    const user = await prisma.user.findUnique({
+      where: { id: payload.id },
+      select: { id: true, name: true },
+    })
+    if (!user) return next(new Error('Invalid token'))
+    socket.user = user
     next()
   } catch {
     next(new Error('Invalid token'))
