@@ -183,16 +183,8 @@ The included `vercel.json` uses [Vercel Services](https://vercel.com/docs/servic
    | `JWT_SECRET` | A long random string |
    | `CLIENT_ORIGIN` | Your deployment URL, e.g. `https://pulse.vercel.app` |
 
-4. Deploy. The server build command runs `prisma generate` and `prisma db push` against `schema.postgres.prisma`.
-5. Optionally seed the demo workspace against Neon:
-
-   ```bash
-   cd server
-   DATABASE_URL="postgres://..." npx prisma generate --schema prisma/schema.postgres.prisma
-   DATABASE_URL="postgres://..." npm run db:seed
-   ```
-
-   Running the Postgres generate replaces the local SQLite client. Run `npx prisma generate` again when you go back to local development.
+4. Deploy. The server build command checks `DATABASE_URL`, runs `prisma generate` and `prisma db push` against `schema.postgres.prisma`, then seeds the demo workspace. Seeding is idempotent, so redeploys do not duplicate messages.
+5. Done. Open the deployment URL and log in with `demo@pulse.app` / `demo1234`, or create an account. Environment variables only apply to new builds, so redeploy after changing them.
 
 **Realtime note:** Vercel functions do not keep a long-lived Socket.IO server, so the deployed client polls every five seconds. Run the Express server on a long-lived host (Railway, Render, Fly.io, a VPS) and set `VITE_REALTIME=live` if you want sockets in production.
 
