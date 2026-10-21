@@ -1,12 +1,10 @@
 import { PrismaClient } from '@prisma/client'
 
-const url =
-  process.env.DATABASE_URL ||
-  process.env.DATABASE_URL_UNPOOLED ||
-  process.env.POSTGRES_PRISMA_URL ||
-  process.env.POSTGRES_URL_NON_POOLING ||
-  process.env.POSTGRES_URL
+import { resolveDatabaseUrl } from './dbUrl.js'
 
-if (url && !process.env.DATABASE_URL) process.env.DATABASE_URL = url
+if (!process.env.DATABASE_URL) {
+  const resolved = resolveDatabaseUrl()
+  if (resolved.url) process.env.DATABASE_URL = resolved.url
+}
 
 export const prisma = new PrismaClient()
