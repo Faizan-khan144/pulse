@@ -15,7 +15,7 @@
       "root": "server",
       "framework": "express",
       "entrypoint": "src/app.js",
-      "buildCommand": "if [ -z \"$DATABASE_URL\" ]; then echo \"Add DATABASE_URL in Vercel Project Settings > Environment Variables.\"; exit 1; fi && npx prisma generate --schema prisma/schema.postgres.prisma && npx prisma db push --schema prisma/schema.postgres.prisma && node prisma/seed.mjs"
+      "buildCommand": "node -e \"const u=process.env.DATABASE_URL; if(!u){console.error('DATABASE_URL is missing. Add it in Vercel Project Settings > Environment Variables.'); process.exit(1)} const p=new URL(u); console.log('DB host:', p.hostname, '| protocol:', p.protocol)\" && npx prisma generate --schema prisma/schema.postgres.prisma && npx prisma db push --schema prisma/schema.postgres.prisma --skip-generate && node prisma/seed.mjs"
     }
   },
   "rewrites": [
