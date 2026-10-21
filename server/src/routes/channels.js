@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { prisma } from '../db.js'
 import { requireAuth } from '../auth.js'
 import { emitToUser } from '../events.js'
+import { botReplyText } from '../bot.js'
 
 const router = Router()
 router.use(requireAuth)
@@ -40,8 +41,32 @@ const ensured = new Set()
 const BOT_LINES = [
   "Welcome to Pulse. I'm the workspace bot: this DM is where I leave setup notes, not small talk.",
   'Start in #general, create a channel when the team needs one, or open a DM from the left. Enter sends, Shift + Enter starts a new line.',
+  'Type "help" to see the setup questions I can answer.',
 ]
 
+async function createBotReply(channelId, body, senderId) {
+  try {
+    const botMember = await prisma.channelMember.findFirst({
+      where: { channelId, user: { isBot: true }, channel: { type: 'DM' } },
+      select: { userId: true },
+    })
+    if (!botMember || botMember.userId === senderId) return
+    const sender = await prisma.user.findUnique({
+      where: { id: senderId },
+      select: { name: true, title: true },
+    })
+    if (!sender) return
+    const reply = await prisma.message.create({
+      data: { channelId, authorId: botMember.userId, body: await botReplyText(body, sender) },
+      include: {
+        author: { select: { id: true, name: true, avatarColor: true, isBot: true } },
+        reactions: { select: { emoji: true, userId: true } },
+      },
+    })
+    const payload = { channelId, message: shapeMessage(reply) }
+    for (const userId of await memberIds(channelId)) emitToUser(userId, 'message:new', payload)
+  } catch {}
+}
 async function ensureBotDm(userId) {
   if (ensured.has(userId)) return
   let bot = await prisma.user.findFirst({ where: { isBot: true } })
@@ -272,6 +297,7 @@ router.post('/:id/messages', async (req, res) => {
 
   const payload = { channelId: req.params.id, message: shapeMessage(message) }
   for (const userId of await memberIds(req.params.id)) emitToUser(userId, 'message:new', payload)
+  await createBotReply(req.params.id, body, req.user.id)
 
   res.status(201).json(payload)
 })
