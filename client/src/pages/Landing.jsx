@@ -118,7 +118,7 @@ const limits = [
   },
 ]
 
-const bandSolid = ['No bots', 'No fake activity', 'No noise']
+const bandSolid = ['No fake teammates', 'No fake activity', 'No noise']
 const bandOutline = ['Channels', 'Direct messages', 'Presence', 'Reactions']
 
 const keywords = [
